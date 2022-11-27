@@ -4,9 +4,14 @@ const app = express();
 const PUERTO = 3000 || process.env.PORT;
 const dir = `${__dirname}/emercado-api-main`;
 
+const buyReg = require("./buy_reg.js");
+
 // Router
 const routerApi = express.Router();
 app.use("/emercado-api", routerApi)
+
+// Middleware
+routerApi.use(express.json()); // Interpreta el body de las peticiones (json)
 
 // carrito de usuario 25801
 routerApi.get("/user_cart/", (req, res) => {
@@ -45,6 +50,16 @@ routerApi.get("/cats/", (req, res) => {
 routerApi.get("/cart/", (req, res) => {
     res.sendFile(dir + `/cart/buy.json`);
 });
+
+// Desafiate - almacenar datos de las compras efectuadas
+routerApi.post("/buy_reg/", (req, res) => {
+    let newBuy = req.body;
+    buyReg.push(newBuy);
+    console.log(buyReg);
+    res.send(JSON.stringify(buyReg));
+});
+
+console.log(buyReg);
 
 app.listen(PUERTO, () => {
     console.log(`El servidor esta escuchando el puerto ${PUERTO}`);
